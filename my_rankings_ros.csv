@@ -1,0 +1,4 @@
+# Your rest-of-season rankings, by position. List only the players you have an opinion on;
+# everyone else keeps the model's projection. Positions: QB, RB, WR, TE, K, DST
+# Example: RB,1,Bijan Robinson   or   DST,3,Ravens
+position,rank,player
