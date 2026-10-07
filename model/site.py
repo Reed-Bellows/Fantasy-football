@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import scoring
+from . import blend, scoring
 from .projections import Model
 
 # Replacement level for value over replacement in a 12-team, one-QB league
@@ -46,7 +46,7 @@ def _stat_line(r) -> str:
     return f"{r.sacks:.1f} sacks · {r.to:.1f} TO · opp. {r.opp_implied:.0f} pts"
 
 
-def build(m: Model) -> dict:
+def build(m: Model, weight: float = blend.WEIGHT) -> dict:
     proj = m.project(range(m.week, 19))
     today = datetime.now().date()
     weeks_played = m.d.sched.melt(id_vars="week", value_vars=["home_team", "away_team"]).groupby("value").week.apply(set)
@@ -60,6 +60,8 @@ def build(m: Model) -> dict:
                 inj=("inj", "first"), inj_week=("inj_week", "first"), birth=("birth_date", "first"),
                 gp=("avail", "sum"), **{f"ev_{f}": (f"ev_{f}", "sum") for f in scoring.FORMATS})
            .reset_index())
+    mine, _ = blend.load(blend.ROS_FILE)
+    ros = blend.apply(ros, mine, [f"ev_{f}" for f in scoring.FORMATS], weight, "Rest of season")
     ros = _top(ros, ROS_POOL, "ev_ppr")
     for f in scoring.FORMATS:
         ros[f"pr_{f}"] = ros.groupby("position")[f"ev_{f}"].rank(ascending=False, method="first").astype(int)
@@ -78,6 +80,11 @@ def build(m: Model) -> dict:
 
     # ---- this week: points if he plays, with a typical range ----
     wk = proj[(proj.week == m.week) & (proj.avail > 0)].copy()
+    mine, mine_week = blend.load(blend.WEEK_FILE)
+    if mine_week is not None and mine_week != m.week:
+        print(f"Weekly: {blend.WEEK_FILE.name} is for Week {mine_week}, not Week {m.week} — using the model only")
+    else:
+        wk = blend.apply(wk, mine, [f"pts_{f}" for f in scoring.FORMATS], weight, f"Week {m.week}")
     wk = _top(wk, WK_POOL, "pts_ppr")
     for f in scoring.FORMATS:
         wk[f"pr_{f}"] = wk.groupby("position")[f"pts_{f}"].rank(ascending=False, method="first").astype(int)

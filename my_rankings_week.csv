@@ -1,0 +1,4 @@
+# Your rankings for one week, by position. Update the week number each week:
+# if it doesn't match the week being built, the weekly board uses the model only.
+# week: 5
+position,rank,player

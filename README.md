@@ -48,6 +48,35 @@ Each week, after the games finish (and again late in the week, once injury repor
 
 This projects the next week that has unplayed games and rewrites the data block in `index.html`. Use `--week 6` to pick a specific week.
 
+## Adding your own rankings
+
+The board shows one set of rankings: the model's projections blended with your own. Your rankings live in two files at the top of the repo:
+
+| File | What it holds |
+|---|---|
+| `my_rankings_ros.csv` | Rest-of-season rankings. Update whenever your outlook changes. |
+| `my_rankings_week.csv` | Rankings for one week. Set the `# week: N` line to the week you're ranking; if it doesn't match the week being built, the weekly board uses the model only. |
+
+Each line is `position,rank,player`, ranked within the position:
+
+```
+RB,1,Bijan Robinson
+WR,3,Amon-Ra St. Brown
+DST,2,Ravens
+```
+
+List only the players you have an opinion on; everyone else keeps the model's projection. Capitalization, punctuation and suffixes like "Jr." don't matter, and a D/ST can be its nickname or team abbreviation.
+
+When you run `model.build`, each player you ranked gets the points the model projects for that slot (your RB5 is worth the model's RB5 projection), blended with his own projection:
+
+```
+final points = 70% your points + 30% model points
+```
+
+The blend runs separately for PPR, Half PPR and Standard, before value over replacement and the overall, positional and FLEX ranks are computed. Change the weight with `--weight` (`--weight 0` ignores your files). The build prints any lines it couldn't match, with a suggestion when it looks like a typo.
+
+Only the blended rankings reach the site, so only someone who can push to this repo can change them.
+
 ## Checking accuracy
 
 ```sh
