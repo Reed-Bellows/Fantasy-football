@@ -2,3 +2,25 @@
 # everyone else keeps the model's projection. Positions: QB, RB, WR, TE, K, DST
 # Example: RB,1,Bijan Robinson   or   DST,3,Ravens
 position,rank,player
+RB,1,Jahmyr Gibbs
+RB,2,Bijan Robinson
+RB,3,Kenneth Walker
+RB,4,Jonathan Taylor
+RB,5,Ashton Jeanty
+RB,6,Christian McCaffrey
+RB,7,James Cook
+RB,8,Derrick Henry
+RB,9,Chase Brown
+RB,10,Jeremiyah Love
+RB,11,Kyren Williams
+RB,12,Javonte Williams
+RB,13,D'Andre Swift
+RB,14,Saquon Barkley
+RB,15,Bhayshul Tuten
+RB,16,Bucky Irving
+RB,17,Breece Hall
+RB,18,Chuba Hubbard
+RB,19,Omarion Hampton
+RB,19,Cam Skattebo
+RB,20,Jaylen Warren
+RB,21,Quinshon Judkins
