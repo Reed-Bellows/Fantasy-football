@@ -1,6 +1,6 @@
 # Fantasy Website
 
-**Big Board** is a single-page fantasy football rankings site for the 2026 season. The rankings come from this project's own projection model, built on open data from [nflverse](https://github.com/nflverse) (CC BY 4.0).
+**Big Board** is a fantasy football rankings site for the 2026 season. The rankings come from this project's own projection model, built on open data from [nflverse](https://github.com/nflverse) (CC BY 4.0).
 
 ## Features
 
@@ -10,6 +10,7 @@
 - **Scoring formats**: PPR, Half PPR and Standard
 - **Filters**: by position (QB, RB, WR, TE, FLEX, K, DST), by player or team search, and a toggle to hide players who are Out or on IR
 - **Sorting**: click any column header to sort by it
+- **Trade Analyzer** (`trade.html`): pick any players from the rest-of-season board for each side of a trade. Each side's value is the players' value over replacement, with the best player counted in full and each extra player discounted (85%, 70%, 55%, 40%, then 25%). Sides within 10% of each other are a fair trade; otherwise the side with more value wins.
 
 ## How the model works
 
@@ -27,7 +28,7 @@ The model code lives in [`model/`](model/):
 | `data.py` | Loads nflverse tables |
 | `projections.py` | The projection model, with its tuning constants at the top |
 | `scoring.py` | Fantasy scoring rules |
-| `site.py` | Builds the board's data and writes it into `index.html` |
+| `site.py` | Builds the board's data and writes it to `data.js` |
 | `build.py` | Command line entry point |
 | `backtest.py` | Tests the model on a past season |
 
@@ -46,7 +47,7 @@ Each week, after the games finish (and again late in the week, once injury repor
 .venv/bin/python -m model.build
 ```
 
-This projects the next week that has unplayed games and rewrites the data block in `index.html`. Use `--week 6` to pick a specific week.
+This projects the next week that has unplayed games and rewrites `data.js`, which both pages load. Use `--week 6` to pick a specific week.
 
 The full build also saves the model's projections to `.cache/projections.pkl`. After editing only your rankings files, you can re-blend them into those saved projections without downloading anything:
 
@@ -102,7 +103,7 @@ This replays a past season, projecting each week from only the data available be
 
 ## Viewing locally
 
-Everything the browser needs lives in `index.html`. You can open the file directly, or serve it:
+The site is `index.html` (the Big Board), `trade.html` (the Trade Analyzer), `style.css` and `data.js`. You can open `index.html` directly, or serve the folder:
 
 ```sh
 python3 -m http.server 8000

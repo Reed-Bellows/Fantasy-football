@@ -1,4 +1,5 @@
-"""Turns projections into the board's ROS and WK data and writes them into index.html."""
+"""Turns projections into the board's ROS and WK data and writes them to data.js for the site's pages."""
+import hashlib
 import json
 import re
 from datetime import datetime
@@ -139,14 +140,17 @@ def rank(proj: dict, weight: float = blend.WEIGHT) -> dict:
     return dict(ROS=ros_out, WK=wk_out, INFO=info)
 
 
-BEGIN, END = "// BEGIN MODEL DATA", "// END MODEL DATA"
+PAGES = ["index.html", "trade.html"]  # pages that load data.js
+DATA_SRC = re.compile(r'src="data\.js(\?v=[0-9a-f]*)?"')
 
 
-def write(payload: dict, html_path: Path):
-    html = html_path.read_text()
+def write(payload: dict, out_dir: Path):
+    """Write the board's data to data.js and point each page at this version, so browsers don't keep a stale copy."""
     dump = lambda x: json.dumps(x, separators=(",", ":"), ensure_ascii=False, default=lambda o: o.item() if isinstance(o, np.generic) else str(o))
-    block = "\n".join(f"const {k} = {dump(v)};" for k, v in payload.items())
-    pattern = re.compile(re.escape(BEGIN) + r".*?" + re.escape(END), re.S)
-    if not pattern.search(html):
-        raise SystemExit(f"{html_path} has no '{BEGIN}' ... '{END}' block to replace")
-    html_path.write_text(pattern.sub(lambda _: f"{BEGIN}\n{block}\n{END}", html))
+    js = "".join(f"const {k} = {dump(v)};\n" for k, v in payload.items())
+    (out_dir / "data.js").write_text(js)
+    version = hashlib.sha1(js.encode()).hexdigest()[:10]
+    for page in PAGES:
+        path = out_dir / page
+        if path.exists():
+            path.write_text(DATA_SRC.sub(f'src="data.js?v={version}"', path.read_text()))
