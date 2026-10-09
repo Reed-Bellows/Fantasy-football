@@ -10,7 +10,7 @@
 - **Scoring formats**: PPR, Half PPR and Standard
 - **Filters**: by position (QB, RB, WR, TE, FLEX, K, DST), by player or team search, and a toggle to hide players who are Out or on IR
 - **Sorting**: click any column header to sort by it
-- **Trade Analyzer** (`trade.html`): pick any players from the rest-of-season board for each side of a trade. Each side's value is the players' value over replacement, with the best player counted in full and each extra player discounted (85%, 70%, 55%, 40%, then 25%). Sides within 10% of each other are a fair trade; otherwise the side with more value wins.
+- **Trade Analyzer** (`trade.html`): pick any players from the rest-of-season board for each side of a trade. Each side's value is the players' value over replacement, plus a 10% depth credit for points up to replacement level so bench players keep their order, with the best player counted in full and each extra player discounted (85%, 70%, 55%, 40%, then 25%). Sides within 10% of each other are a fair trade; otherwise the side with more value wins.
 
 ## How the model works
 
