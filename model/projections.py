@@ -26,6 +26,7 @@ CV = {"QB": 0.40, "RB": 0.55, "WR": 0.60, "TE": 0.65, "K": 0.50, "DST": 0.75}
 PRIOR_SHARE = {"QB": (0.0, 0.03), "RB": (0.015, 0.03), "WR": (0.02, 0.002), "TE": (0.015, 0.001)}
 INJURY_AVAIL = {"Out": 0.0, "Doubtful": 0.2, "Questionable": 0.8}
 IR_WEEKS = 4            # minimum stint on injured reserve
+TE_SCALE = 0.95         # tight ends' projected stat lines (and so points) are scaled by this; 1.0 means no change
 TEAM_COLS = ["attempts", "carries", "targets", "pf", "pa", "def_sacks", "def_interceptions", "fumble_recovery_opp",
              "def_tds", "special_teams_tds", "def_safeties", "sacks_suffered", "passing_interceptions",
              "fumbles_lost_total", "fg_att", "pat_att"]
@@ -277,6 +278,8 @@ class Model:
             att=att, pass_yd=att * p.ypa.to_numpy() * mu * cx["yd_env"],
             pass_td=att * p.pass_td.to_numpy() * cx["td_env"] * mu, int=att * p.int.to_numpy(),
             fum=(rec + car) * FUMBLE_RATE)
+        te = np.where(p.position == "TE", TE_SCALE, 1.0)
+        line = {k: v * te for k, v in line.items()}
         for k, v in line.items():
             p[k] = v
         for f, ppr in scoring.FORMATS.items():
