@@ -2,6 +2,8 @@
 # everyone else keeps the model's projection. Positions: QB, RB, WR, TE, K, DST
 # Example: RB,1,Bijan Robinson   or   DST,3,Ravens
 position,rank,player
+
+# Running Backs
 RB,1,Jahmyr Gibbs
 RB,2,Bijan Robinson
 RB,3,Kenneth Walker
@@ -28,21 +30,154 @@ RB,23,David Montgomery
 RB,24,Treveyon Henderson
 RB,25,Rhamondre Stevenson
 RB,26,Kyle Monangai
-RB,27,Blake Corum
-RB,28,Travis Etienne Jr.
-RB,29,Jacory Croskey-Merritt 
-RB,30,Aaron Jones
-RB,31,Jadarian Price
-RB,32,RJ Harvey
-RB,33,J.K. Dobbins
-RB,34,Tony Pollard
-RB,35,Josh Jacobs
-RB,36,Jordan Mason
-RB,37,Rico Dowdle
-RB,38,Ollie Gordon
+RB,27,Ollie Gordon
+RB,28,Blake Corum
+RB,29,Travis Etienne Jr.
+RB,30,Jacory Croskey-Merritt
+RB,31,Aaron Jones Sr.
+RB,32,Jadarian Price
+RB,33,RJ Harvey
+RB,34,J.K. Dobbins
+RB,35,Tony Pollard
+RB,36,Josh Jacobs
+RB,37,Jordan Mason
+RB,38,Rico Dowdle
 RB,39,Brian Robinson Jr.
 RB,40,Emmett Johnson
 RB,41,Kaelon Black
 RB,42,Rachaad White
 RB,43,Woody Marks
 RB,44,Braelon Allen
+RB,45,Tyler Allgeier
+RB,46,Keaton Mitchell
+RB,47,Mike Washington Jr.
+Rb,48,Alvin Kamara
+RB,49,Emanuel Wilson
+RB,50,Zach Charbonnet
+RB,51,Will Shipley
+
+# Wide Receivers
+WR,1,Jaxon Smith-Njigba
+WR,2,Ja'marr Chase
+WR,3,Puka Nacua
+WR,4,CeeDee Lamb
+WR,5,Amon-Ra St. Brown
+WR,6,Nico Collins
+WR,7,Justin Jefferson
+WR,8,Drake London
+WR,9,Chris Olave
+WR,10,Zay Flowers
+WR,11,Malik Nabers
+WR,12,Christian Watson
+WR,13,George Pickens
+WR,14,Garrett Wilson
+WR,15,Tetairoa McMillan
+WR,16,Parker Washington
+WR,17,DeVonta Smith
+WR,18,Tee Higgins
+WR,19,Jaylen Waddle
+WR,20,Davante Adams
+WR,21,Matthew Golden
+WR,22,DJ Moore
+WR,23,Mike Evans
+WR,24,Carnell Tate
+WR,25,A.J. Brown
+WR,26,Michael Wilson
+WR,27,Ladd McConkey
+WR,28,Rashee Rice
+WR,29,Josh Downs
+WR,30,Rome Odunze
+WR,31,Luther Burden
+WR,32,Jalen Coker
+WR,33,Terry McLaurin
+WR,34,Jameson Williams
+WR,35,Emeka Egbuka
+WR,36,DK Metcalf
+WR,37,Denzel Boston
+WR,38,Stefon Diggs
+WR,39,KC Concepcion Jr.
+WR,40,Deebo Samuel Sr.
+WR,41,Jakobi Meyers
+WR,42,Romeo Doubs
+WR,43,Jordan Addison
+WR,44,Xavier Worthy
+WR,45,Marvin Harrison Jr.
+WR,46,Chris Godwin Jr.
+WR,47,Devaughn Vele
+WR,48,Jordyn Tyson
+WR,49,Keenan Allen
+WR,50,Chris Bell
+WR,51,Brian Thomas Jr.
+WR,52,Tre Tucker
+WR,53,Kalif Raymond
+WR,54,Wandale Robinson
+WR,55,Malik Washington
+
+#Quarterbacks
+QB,1,Josh Allen
+QB,2,Lamar Jackson
+QB,3,Trevor Lawrence
+QB,4,Joe Burrow
+QB,5,Dak Prescott
+QB,6,Patrick Mahomes
+QB,7,Brock Purdy
+QB,8,Drake Maye
+QB,9,Caleb Williams
+QB,10,Jared Goff
+QB,11,Jayden Daniels
+QB,12,Tyler Shough
+QB,13,Jordan Love
+QB,14,Matthew Stafford
+QB,15,Bryce Young
+QB,16,Jalen Hurts
+QB,17,Bo Nix
+QB,18,C.J. Stroud
+QB,19,Justin Herbert
+QB,20,Malik Willis
+QB,21,Sam Darnold
+QB,22,Kyler Murray
+QB,23,Kirk Cousins
+QB,24,Jacoby Brissett
+QB,25,Geno Smith
+QB,26,Deshaun Watson
+QB,27,Daniel Jones
+QB,28,Baker Mayfield
+QB,29,Michael Penix Jr.
+QB,30,Aaron Rodgers
+QB,31,Cam Ward
+QB,32,Jameis Winston
+
+# Tight End Rankings
+TE,1,Brock Bowers
+TE,2,Trey McBride
+TE,3,George Kittle
+TE,4,Tyler Warren
+TE,5,Dalton Kincaid
+TE,6,Sam LaPorta
+TE,7,Tucker Kraft
+TE,8,Colston Loveland
+TE,9,Travis Kelce
+TE,10,Juwan Johnson
+TE,11,Harold Fannin Jr.
+TE,12,Isaiah Likely
+TE,13,Dallas Goedert
+TE,14,Kenyon Sadiq
+TE,15,Jake Ferguson
+TE,16,T.J. Hockenson
+TE,17,Mark Andrews
+TE,18,Brenton Strange
+TE,19,Kyle Pitts
+TE,20,Darren Waller
+TE,21,Dalton Schultz
+TE,22,Mike Gesicki
+TE,23,Terrance Ferguson
+TE,24,Pat Freiermuth
+TE,25,Hunter Henry
+TE,26,Michael Mayer
+TE,27,Oronde Gadsden II
+TE,28,AJ Barner
+TE,29,Chig Okonkwo
+TE,30,Greg Dulcich
+TE,31,Cade Otton
+TE,32,Evan Engram
+
