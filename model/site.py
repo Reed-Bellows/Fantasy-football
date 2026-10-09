@@ -17,6 +17,8 @@ ROS_POOL = {"QB": 36, "RB": 70, "WR": 90, "TE": 36, "K": 32, "DST": 32}
 WK_POOL = {"QB": 32, "RB": 64, "WR": 80, "TE": 32, "K": 30, "DST": 30}
 FLEX = ["RB", "WR", "TE"]
 Z80 = 0.84  # the range shown is the middle 60% of outcomes (20th to 80th percentile)
+# The full build saves the model's projections here, so a rankings-only build can reuse them
+CACHE = blend.ROOT / ".cache" / "projections.pkl"
 
 
 def _r1(x):
@@ -47,8 +49,12 @@ def _stat_line(r) -> str:
 
 
 def build(m: Model, weight: float = blend.WEIGHT) -> dict:
+    return rank(project(m), weight)
+
+
+def project(m: Model) -> dict:
+    """The model's own projections, before your rankings: the slow part, which needs the nflverse data."""
     proj = m.project(range(m.week, 19))
-    today = datetime.now().date()
     weeks_played = m.d.sched.melt(id_vars="week", value_vars=["home_team", "away_team"]).groupby("value").week.apply(set)
     bye = {t: next((w for w in range(1, 19) if w not in ws), None) for t, ws in weeks_played.items()}
 
@@ -60,6 +66,30 @@ def build(m: Model, weight: float = blend.WEIGHT) -> dict:
                 inj=("inj", "first"), inj_week=("inj_week", "first"), birth=("birth_date", "first"),
                 gp=("avail", "sum"), **{f"ev_{f}": (f"ev_{f}", "sum") for f in scoring.FORMATS})
            .reset_index())
+    wk = proj[(proj.week == m.week) & (proj.avail > 0)].copy()
+
+    line_weeks = sorted(int(w) for w in m.games[m.games.line].week.unique())
+    info = dict(season=m.season, week=m.week, built=datetime.now().date().isoformat(),
+                stats_through=m.week - 1, line_weeks=line_weeks)
+    return dict(ros=ros, wk=wk, bye=bye, info=info)
+
+
+def save(proj: dict, path: Path = CACHE):
+    path.parent.mkdir(exist_ok=True)
+    pd.to_pickle(proj, path)
+
+
+def load(path: Path = CACHE) -> dict:
+    if not path.exists():
+        raise SystemExit(f"No saved projections at {path}: run a full build first (.venv/bin/python -m model.build)")
+    return pd.read_pickle(path)
+
+
+def rank(proj: dict, weight: float = blend.WEIGHT) -> dict:
+    """Blend your rankings into the projections and rank the board: fast, no downloads."""
+    ros, wk, bye, info = proj["ros"].copy(), proj["wk"].copy(), proj["bye"], proj["info"]
+    week, today = info["week"], datetime.now().date()
+
     mine, _ = blend.load(blend.ROS_FILE)
     ros = blend.apply(ros, mine, [f"ev_{f}" for f in scoring.FORMATS], weight, "Rest of season")
     ros = _top(ros, ROS_POOL, "ev_ppr")
@@ -80,12 +110,11 @@ def build(m: Model, weight: float = blend.WEIGHT) -> dict:
         for r in ros.itertuples()]
 
     # ---- this week: points if he plays, with a typical range ----
-    wk = proj[(proj.week == m.week) & (proj.avail > 0)].copy()
     mine, mine_week = blend.load(blend.WEEK_FILE)
-    if mine_week is not None and mine_week != m.week:
-        print(f"Weekly: {blend.WEEK_FILE.name} is for Week {mine_week}, not Week {m.week} — using the model only")
+    if mine_week is not None and mine_week != week:
+        print(f"Weekly: {blend.WEEK_FILE.name} is for Week {mine_week}, not Week {week} — using the model only")
     else:
-        wk = blend.apply(wk, mine, [f"pts_{f}" for f in scoring.FORMATS], weight, f"Week {m.week}")
+        wk = blend.apply(wk, mine, [f"pts_{f}" for f in scoring.FORMATS], weight, f"Week {week}")
     wk = _top(wk, WK_POOL, "pts_ppr")
     for f in scoring.FORMATS:
         wk[f"pr_{f}"] = wk.groupby("position")[f"pts_{f}"].rank(ascending=False, method="first").astype(int)
@@ -107,9 +136,6 @@ def build(m: Model, weight: float = blend.WEIGHT) -> dict:
         f={f: wk_fmt(r, f) for f in scoring.FORMATS})
         for r in wk.itertuples()]
 
-    line_weeks = sorted(int(w) for w in m.games[m.games.line].week.unique())
-    info = dict(season=m.season, week=m.week, built=today.isoformat(),
-                stats_through=m.week - 1, line_weeks=line_weeks)
     return dict(ROS=ros_out, WK=wk_out, INFO=info)
 
 
