@@ -48,6 +48,14 @@ Each week, after the games finish (and again late in the week, once injury repor
 
 This projects the next week that has unplayed games and rewrites the data block in `index.html`. Use `--week 6` to pick a specific week.
 
+The full build also saves the model's projections to `.cache/projections.pkl`. After editing only your rankings files, you can re-blend them into those saved projections without downloading anything:
+
+```sh
+.venv/bin/python -m model.build --rankings-only
+```
+
+The projections stay exactly as the last full build left them, so the only changes on the board come from your rankings.
+
 ## Adding your own rankings
 
 The board shows one set of rankings: the model's projections blended with your own. Your rankings live in two files at the top of the repo:
