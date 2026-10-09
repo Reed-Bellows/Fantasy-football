@@ -19,7 +19,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 ROS_FILE = ROOT / "my_rankings_ros.csv"
 WEEK_FILE = ROOT / "my_rankings_week.csv"
-WEIGHT = 0.7  # your share of the final points; 0 means model only
+WEIGHT = 0.8  # your share of the final points; 0 means model only
 POSITIONS = {"QB", "RB", "WR", "TE", "K", "DST"}
 SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v"}
 WEEK_LINE = re.compile(r"#\s*week\s*:?\s*(\d+)", re.I)

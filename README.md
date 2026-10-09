@@ -70,7 +70,7 @@ List only the players you have an opinion on; everyone else keeps the model's pr
 When you run `model.build`, each player you ranked gets the points the model projects for that slot (your RB5 is worth the model's RB5 projection), blended with his own projection:
 
 ```
-final points = 70% your points + 30% model points
+final points = 80% your points + 20% model points
 ```
 
 The blend runs separately for PPR, Half PPR and Standard, before value over replacement and the overall, positional and FLEX ranks are computed. Change the weight with `--weight` (`--weight 0` ignores your files). The build prints any lines it couldn't match, with a suggestion when it looks like a typo.
