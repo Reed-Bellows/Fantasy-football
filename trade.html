@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trade Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Two sides of the deal side by side, the verdict underneath */
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media (max-width:760px){.sides{grid-template-columns:1fr}}
+.side{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+.side h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:22px;letter-spacing:.03em;margin:0 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.side h2 .tot{font:500 13px var(--mono);letter-spacing:0;text-transform:none;color:var(--muted)}
+.side h2 .tot b{color:var(--fg);font-size:16px}
+.picker{position:relative}
+.picker input{font:14px var(--body);padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);width:100%}
+.picker ul{position:absolute;z-index:10;left:0;right:0;top:calc(100% + 4px);margin:0;padding:4px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px rgb(0 0 0 / .18);max-height:320px;overflow-y:auto}
+.picker li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 8px;border-radius:4px;cursor:pointer}
+.picker li[aria-selected="true"]{background:var(--chalk)}
+.picker li .pv{font:500 12px var(--mono);color:var(--muted);white-space:nowrap}
+.picker li.none{color:var(--muted);cursor:default}
+.plist{list-style:none;margin:10px 0 0;padding:0}
+.plist li{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.plist .val{font:500 14px var(--mono);text-align:right}
+.plist .cnt{display:block;font-size:11px;color:var(--muted)}
+.plist button{font:600 16px var(--body);line-height:1;background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:6px;width:30px;height:30px;cursor:pointer}
+.plist button:hover{color:var(--bad);border-color:var(--bad)}
+.hint{color:var(--muted);font-size:13px;padding:14px 0 4px;margin:0}
+.verdict{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:8px;padding:16px}
+.verdict.win{border-left-color:var(--accent)} .verdict.lose{border-left-color:var(--bad)} .verdict.fair{border-left-color:var(--warn)}
+.verdict h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(26px,4vw,36px);line-height:1;margin:0 0 6px}
+.verdict p{margin:0;color:var(--muted)}
+.tip{position:relative;height:14px;border-radius:7px;background:var(--chalk);margin:14px 0 6px;overflow:hidden}
+.tip span{position:absolute;top:0;bottom:0}
+.tip .give{left:0;background:var(--bad);opacity:.55}
+.tip .get{right:0;background:var(--accent);opacity:.7}
+.tip .mid{left:50%;width:2px;margin-left:-1px;background:var(--fg)}
+.tiplab{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions button{font:600 13px var(--body);background:transparent;color:var(--fg);border:1.5px solid var(--fg);border-radius:6px;padding:7px 12px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="site" aria-label="Pages"><a href="index.html">Big Board</a><a href="trade.html" aria-current="page">Trade Analyzer</a></nav>
+  <header class="top">
+    <h1><small id="kicker"></small>Trade Analyzer</h1>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="Trade options">
+    <div class="seg" id="fmt" aria-label="Scoring format">
+      <button type="button" data-f="ppr" aria-pressed="true">PPR</button>
+      <button type="button" data-f="half" aria-pressed="false">Half PPR</button>
+      <button type="button" data-f="std" aria-pressed="false">Standard</button>
+    </div>
+    <div class="actions">
+      <button type="button" id="swap">Swap sides</button>
+      <button type="button" id="clear">Clear</button>
+    </div>
+  </div>
+
+  <div class="sides">
+    <section class="side" id="side-give" aria-labelledby="h-give">
+      <h2><span id="h-give">You give</span><span class="tot" id="tot-give"></span></h2>
+      <div class="picker">
+        <input type="search" id="q-give" placeholder="Add a player you'd trade away" autocomplete="off"
+               role="combobox" aria-expanded="false" aria-controls="dd-give" aria-autocomplete="list" aria-label="Add a player you give">
+        <ul id="dd-give" role="listbox" hidden></ul>
+      </div>
+      <ul class="plist" id="list-give"></ul>
+    </section>
+    <section class="side" id="side-get" aria-labelledby="h-get">
+      <h2><span id="h-get">You get</span><span class="tot" id="tot-get"></span></h2>
+      <div class="picker">
+        <input type="search" id="q-get" placeholder="Add a player you'd receive" autocomplete="off"
+               role="combobox" aria-expanded="false" aria-controls="dd-get" aria-autocomplete="list" aria-label="Add a player you get">
+        <ul id="dd-get" role="listbox" hidden></ul>
+      </div>
+      <ul class="plist" id="list-get"></ul>
+    </section>
+  </div>
+
+  <div class="verdict" id="verdict" aria-live="polite"></div>
+
+  <div class="notes">
+    <section>
+      <h2>Player value</h2>
+      <p>Each player's value is his rest-of-season projection above a replacement-level starter at his position (QB12, RB30, WR36, TE14, K12 and DST12 in a 12-team, one-QB league), the same Value column as the Big Board. It already accounts for injuries and games left. Players below replacement count as 0.</p>
+    </section>
+    <section>
+      <h2>Depth discount</h2>
+      <p>You can only start so many players, so a pile of depth isn't worth as much as one star. On each side, the best player counts in full, the second at 85%, the third at 70%, and so on down to 25%.</p>
+    </section>
+    <section>
+      <h2>The verdict</h2>
+      <p>If the two sides are within 10% of each other, it's a fair trade. Otherwise the side with more value wins.</p>
+    </section>
+  </div>
+
+  <p class="credit">Projections are this site's own model. Stats, schedules, betting lines, rosters and injury reports come from <a href="https://github.com/nflverse">nflverse</a> (CC BY 4.0).</p>
+</div>
+
+<script src="data.js?v=076f2ed1ed"></script>
+<script>
+const $=id=>document.getElementById(id);
+const FMT={ppr:'PPR',half:'Half PPR',std:'Standard'};
+const OUTS=new Set(['Out','IR','PUP','DNR','Doubtful','Sus']);
+const DEPTH=[1,.85,.7,.55,.4,.25];   // share of value counted for each side's 1st, 2nd, 3rd... best player
+const FAIR=0.10;                     // sides within 10% of each other are a fair trade
+const key=o=>`${o.n}|${o.p}|${o.t}`;
+const BY=new Map(ROS.map(o=>[key(o),o]));
+const st={f:'ppr', give:[], get:[]};
+try{const s=JSON.parse(localStorage.getItem('cbb')||'{}'); if(FMT[s.f]) st.f=s.f;}catch(e){}
+try{const t=JSON.parse(localStorage.getItem('cbb-trade')||'{}');
+  for(const side of ['give','get']) st[side]=(t[side]||[]).filter(k=>BY.has(k));}catch(e){}
+
+const value=o=>Math.max(0,o.f[st.f].v??0);
+const fmt1=x=>x.toFixed(1);
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function injTag(o){if(!o.i)return ''; const c=OUTS.has(o.i)?'out':'q'; return `<span class="inj ${c}">${o.i==='Questionable'?'Q':o.i}</span>`;}
+
+// Each side's players, best first, with the share of value that counts
+function tally(side){
+  const ps=st[side].map(k=>BY.get(k)).sort((a,b)=>value(b)-value(a));
+  const rows=ps.map((o,i)=>{const w=DEPTH[Math.min(i,DEPTH.length-1)]; return {o, raw:value(o), w, counted:value(o)*w};});
+  return {rows, raw:rows.reduce((s,r)=>s+r.raw,0), total:rows.reduce((s,r)=>s+r.counted,0)};
+}
+
+function drawSide(side, t){
+  $(`tot-${side}`).innerHTML = t.rows.length ? `<b>${fmt1(t.total)}</b> value` : '';
+  $(`list-${side}`).innerHTML = t.rows.length ? t.rows.map(r=>{const o=r.o, f=o.f[st.f];
+    return `<li><div><div class="pname">${esc(o.n)}</div><div class="psub"><span class="pos ${o.p}">${o.p}${f.pr}</span><span>${o.t}</span>${o.b?`<span>Bye ${o.b}</span>`:''}${injTag(o)}</div></div>
+      <div class="val">${fmt1(r.counted)}<span class="cnt">${r.w<1?`${Math.round(r.w*100)}% of ${fmt1(r.raw)}`:`${fmt1(f.pts)} pts`}</span></div>
+      <button type="button" data-k="${esc(key(o))}" aria-label="Remove ${esc(o.n)}">×</button></li>`;}).join('')
+    : `<li class="hint" style="display:block;border:0">${side==='give'?'No players yet. Search above to add the players you would send.':'No players yet. Search above to add the players you would receive.'}</li>`;
+}
+
+function drawVerdict(give, get){
+  const v=$('verdict');
+  if(!give.rows.length||!get.rows.length){
+    v.className='verdict'; v.innerHTML=`<h2>Build a trade</h2><p>Add at least one player to each side to see who wins.</p>`; return;}
+  const diff=get.total-give.total, big=Math.max(give.total,get.total), pct=big>0?Math.abs(diff)/big:0;
+  let cls, head;
+  if(big===0||pct<=FAIR){cls='fair'; head='Fair trade';}
+  else if(diff>0){cls='win'; head='You win';}
+  else {cls='lose'; head='They win';}
+  const by = cls==='fair' ? (big===0?'Neither side has value above replacement.':`The sides are within ${Math.round(FAIR*100)}% of each other (${fmt1(Math.abs(diff))} value apart).`)
+    : `${cls==='win'?'You get':'You give up'} ${fmt1(Math.abs(diff))} more value, ${Math.round(pct*100)}% of the bigger side.`;
+  const sum=give.total+get.total, gw=sum?give.total/sum*100:50;
+  v.className=`verdict ${cls}`;
+  v.innerHTML=`<h2>${head}</h2><p>${by}</p>
+    <div class="tip" role="img" aria-label="You give ${fmt1(give.total)}, you get ${fmt1(get.total)}"><span class="give" style="width:${gw}%"></span><span class="get" style="width:${100-gw}%"></span><span class="mid"></span></div>
+    <div class="tiplab"><span>You give ${fmt1(give.total)}</span><span>You get ${fmt1(get.total)}</span></div>`;
+}
+
+function render(){
+  const give=tally('give'), get=tally('get');
+  drawSide('give',give); drawSide('get',get); drawVerdict(give,get);
+  document.querySelectorAll('#fmt button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===st.f));
+  $('kicker').textContent=`Rest of season · ${INFO.season}`;
+  const built=new Date(INFO.built+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  $('meta').innerHTML=`<span>Values for Weeks ${INFO.week} to 18 · ${FMT[st.f]}</span><span>Stats through Week ${INFO.stats_through} · updated <b>${built}</b></span>`;
+  try{const s=JSON.parse(localStorage.getItem('cbb')||'{}'); s.f=st.f; localStorage.setItem('cbb',JSON.stringify(s));
+      localStorage.setItem('cbb-trade',JSON.stringify({give:st.give,get:st.get}));}catch(e){}
+}
+
+// Search box with a dropdown of matching players; arrow keys move, Enter adds, Escape closes
+function picker(side){
+  const input=$(`q-${side}`), dd=$(`dd-${side}`);
+  let matches=[], active=0;
+  const close=()=>{dd.hidden=true; input.setAttribute('aria-expanded','false'); input.removeAttribute('aria-activedescendant');};
+  function show(){
+    const q=input.value.trim().toLowerCase();
+    if(!q){close(); return;}
+    const taken=new Set([...st.give,...st.get]);
+    matches=ROS.filter(o=>!taken.has(key(o))&&(o.n.toLowerCase().includes(q)||o.t.toLowerCase()===q||o.p.toLowerCase()===q))
+      .sort((a,b)=>value(b)-value(a)).slice(0,10);
+    active=Math.min(active,Math.max(0,matches.length-1));
+    dd.innerHTML=matches.length ? matches.map((o,i)=>`<li id="${side}-opt-${i}" role="option" aria-selected="${i===active}" data-i="${i}">
+        <span><span class="pname">${esc(o.n)}</span> <span class="psub" style="display:inline-flex"><span class="pos ${o.p}">${o.p}${o.f[st.f].pr}</span><span>${o.t}</span>${injTag(o)}</span></span>
+        <span class="pv">${fmt1(value(o))}</span></li>`).join('')
+      : `<li class="none">No players match</li>`;
+    dd.hidden=false; input.setAttribute('aria-expanded','true');
+    if(matches.length) input.setAttribute('aria-activedescendant',`${side}-opt-${active}`);
+  }
+  function add(i){const o=matches[i]; if(!o)return; st[side].push(key(o)); input.value=''; active=0; close(); render(); input.focus();}
+  input.addEventListener('input',()=>{active=0; show();});
+  input.addEventListener('focus',show);
+  input.addEventListener('keydown',e=>{
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){if(dd.hidden)show(); if(!matches.length)return; e.preventDefault();
+      active=(active+(e.key==='ArrowDown'?1:-1)+matches.length)%matches.length; show();
+      $(`${side}-opt-${active}`)?.scrollIntoView({block:'nearest'});}
+    else if(e.key==='Enter'){if(!dd.hidden&&matches.length){e.preventDefault(); add(active);}}
+    else if(e.key==='Escape'){close();}
+  });
+  dd.addEventListener('mousedown',e=>{const li=e.target.closest('li[data-i]'); if(li){e.preventDefault(); add(+li.dataset.i);}});
+  input.addEventListener('blur',close);
+  $(`list-${side}`).addEventListener('click',e=>{const b=e.target.closest('button[data-k]'); if(b){st[side]=st[side].filter(k=>k!==b.dataset.k); render();}});
+}
+picker('give'); picker('get');
+$('fmt').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){st.f=b.dataset.f; render();}});
+$('swap').addEventListener('click',()=>{[st.give,st.get]=[st.get,st.give]; render();});
+$('clear').addEventListener('click',()=>{st.give=[]; st.get=[]; render();});
+render();
+</script>
+
+</body>
+</html>

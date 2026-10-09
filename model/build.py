@@ -13,7 +13,7 @@ from pathlib import Path
 from . import blend, data, site
 from .projections import Model
 
-HTML = Path(__file__).resolve().parent.parent / "index.html"
+SITE = Path(__file__).resolve().parent.parent
 
 
 def current_season(today: date) -> int:
@@ -31,7 +31,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--season", type=int, default=current_season(date.today()))
     ap.add_argument("--week", type=int, help="week to project (default: the next week with unplayed games)")
-    ap.add_argument("--html", type=Path, default=HTML)
+    ap.add_argument("--out", type=Path, default=SITE, help="folder to write data.js to (default: the repo)")
     ap.add_argument("--weight", type=float, default=blend.WEIGHT,
                     help=f"your rankings' share of the final points, 0 to 1 (default: {blend.WEIGHT})")
     ap.add_argument("--rankings-only", action="store_true",
@@ -52,8 +52,8 @@ def main():
         proj = site.project(Model(d, week))
         site.save(proj)
     payload = site.rank(proj, args.weight)
-    site.write(payload, args.html)
-    print(f"Wrote {len(payload['ROS'])} rest-of-season and {len(payload['WK'])} Week {week} players to {args.html}")
+    site.write(payload, args.out)
+    print(f"Wrote {len(payload['ROS'])} rest-of-season and {len(payload['WK'])} Week {week} players to {args.out / 'data.js'}")
 
 
 if __name__ == "__main__":
