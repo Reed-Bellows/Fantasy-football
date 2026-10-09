@@ -116,8 +116,12 @@ class Model:
     # ---- players ----
 
     def _roster(self) -> pd.DataFrame:
-        r = self.d.rosters
-        r = r[(r.week == min(self.week, r.week.max())) & r.position.isin(SKILL + ["K"]) & r.status.isin(["ACT", "RES"])]
+        # Each team's latest roster up to this week: teams on bye have no roster for this week
+        r = self.d.rosters[self.d.rosters.week <= self.week]
+        r = r[r.week == r.groupby("team").week.transform("max")]
+        # Game-day inactives count as active (the injury report handles this week); the exempt list counts as reserve
+        r = r.assign(status=r.status.replace({"INA": "ACT", "EXE": "RES"}))
+        r = r[r.position.isin(SKILL + ["K"]) & r.status.isin(["ACT", "RES"])]
         r = r.drop_duplicates("gsis_id").rename(columns={"gsis_id": "player_id", "full_name": "name"})
         r = r[["player_id", "name", "position", "team", "status", "birth_date"]].copy()
 
