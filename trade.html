@@ -91,7 +91,8 @@
   <div class="notes">
     <section>
       <h2>Player value</h2>
-      <p>Each player's value is his rest-of-season projection above a replacement-level starter at his position (QB12, RB30, WR36, TE14, K12 and DST12 in a 12-team, one-QB league), the same Value column as the Big Board. It already accounts for injuries and games left. Players below replacement count as 0.</p>
+      <p>Each player's value is his rest-of-season projection above a replacement-level starter at his position (QB12, RB30, WR36, TE14, K12 and DST12 in a 12-team, one-QB league), the same Value column as the Big Board. It already accounts for injuries and games left.</p>
+      <p>So bench players keep their order, every player also gets a depth credit: 10% of his points up to replacement level, counted from the lowest-ranked player at his position on the board. A backup is always worth less than a replacement-level starter.</p>
     </section>
     <section>
       <h2>Depth discount</h2>
@@ -106,13 +107,14 @@
   <p class="credit">Projections are this site's own model. Stats, schedules, betting lines, rosters and injury reports come from <a href="https://github.com/nflverse">nflverse</a> (CC BY 4.0).</p>
 </div>
 
-<script src="data.js?v=076f2ed1ed"></script>
+<script src="data.js?v=8301dc5096"></script>
 <script>
 const $=id=>document.getElementById(id);
 const FMT={ppr:'PPR',half:'Half PPR',std:'Standard'};
 const OUTS=new Set(['Out','IR','PUP','DNR','Doubtful','Sus']);
 const DEPTH=[1,.85,.7,.55,.4,.25];   // share of value counted for each side's 1st, 2nd, 3rd... best player
 const FAIR=0.10;                     // sides within 10% of each other are a fair trade
+const DEPTH_CREDIT=0.10;             // share of each point up to replacement level that counts, so bench players keep their order
 const key=o=>`${o.n}|${o.p}|${o.t}`;
 const BY=new Map(ROS.map(o=>[key(o),o]));
 const st={f:'ppr', give:[], get:[]};
@@ -120,7 +122,13 @@ try{const s=JSON.parse(localStorage.getItem('cbb')||'{}'); if(FMT[s.f]) st.f=s.f
 try{const t=JSON.parse(localStorage.getItem('cbb-trade')||'{}');
   for(const side of ['give','get']) st[side]=(t[side]||[]).filter(k=>BY.has(k));}catch(e){}
 
-const value=o=>Math.max(0,o.f[st.f].v??0);
+// Per position and format: the replacement level (points minus value) and the lowest score on the board
+const LEVELS={};
+for(const f of Object.keys(FMT)){LEVELS[f]={};
+  for(const o of ROS){const d=o.f[f], l=LEVELS[f][o.p]??={repl:d.pts-d.v, floor:d.pts}; l.floor=Math.min(l.floor,d.pts);}}
+// Full credit for points above replacement, plus a small depth credit for points up to it
+function value(o){const d=o.f[st.f], l=LEVELS[st.f][o.p];
+  return DEPTH_CREDIT*Math.max(0,Math.min(d.pts,l.repl)-l.floor)+Math.max(0,d.pts-l.repl);}
 const fmt1=x=>x.toFixed(1);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function injTag(o){if(!o.i)return ''; const c=OUTS.has(o.i)?'out':'q'; return `<span class="inj ${c}">${o.i==='Questionable'?'Q':o.i}</span>`;}
