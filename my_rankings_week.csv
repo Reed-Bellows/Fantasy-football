@@ -28,23 +28,22 @@ RB,21,Quinshon Judkins
 RB,22,Omarion Hampton
 RB,23,Treveyon Henderson
 RB,24,Rhamondre Stevenson
-RB,25,Kyle Monangai
+RB,25,RJ Harvey
 RB,26,Ollie Gordon
 RB,27,Blake Corum
 RB,28,Alvin Kamara
 RB,29,Jacory Croskey-Merritt
 RB,30,Will Shipley
-RB,31,RJ Harvey
-RB,32,J.K. Dobbins
-RB,33,Tony Pollard
-RB,34,Rico Dowdle
-RB,35,Brian Robinson Jr.
-RB,36,Kaelon Black
-RB,37,Rachaad White
-RB,38,Woody Marks
-RB,39,Tyler Allgeier
-RB,40,Keaton Mitchell
-RB,41,Mike Washington Jr.
+RB,31,J.K. Dobbins
+RB,32,Tony Pollard
+RB,33,Rico Dowdle
+RB,34,Brian Robinson Jr.
+RB,35,Kaelon Black
+RB,36,Rachaad White
+RB,37,Woody Marks
+RB,38,Tyler Allgeier
+RB,39,Keaton Mitchell
+RB,40,Mike Washington Jr.
 
 # Wide Receivers
 WR,1,Puka Nacua
@@ -107,18 +106,18 @@ QB,6,Brock Purdy
 QB,7,Drake Maye
 QB,8,Jared Goff
 QB,9,Jayden Daniels
-QB,10,Tyler Shough
-QB,11,Jordan Love
-QB,12,Jalen Hurts
-QB,13,Bo Nix
-QB,14,C.J. Stroud
-QB,15,Justin Herbert
-QB,16,Malik Willis
-QB,17,Sam Darnold
-QB,18,Kyler Murray
-QB,19,Tyson Bagent
-QB,20,Kirk Cousins
-QB,21,Jacoby Brissett
+QB,10,Jacoby Brissett
+QB,11,Tyler Shough
+QB,12,Jordan Love
+QB,13,Jalen Hurts
+QB,14,Bo Nix
+QB,15,C.J. Stroud
+QB,16,Justin Herbert
+QB,17,Malik Willis
+QB,18,Sam Darnold
+QB,19,Kyler Murray
+QB,20,Tyson Bagent
+QB,21,Kirk Cousins
 QB,22,Geno Smith
 QB,23,Deshaun Watson
 QB,24,Daniel Jones
@@ -126,6 +125,8 @@ QB,25,Michael Penix Jr.
 QB,26,Aaron Rodgers
 QB,27,Cam Ward
 QB,28,Jameis Winston
+QB,29,Jalon Daniels
+QB,30,Tyler Huntley
 
 # Tight End Rankings
 TE,1,Trey McBride
