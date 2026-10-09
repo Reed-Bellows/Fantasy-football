@@ -67,15 +67,16 @@ def build(m: Model, weight: float = blend.WEIGHT) -> dict:
         ros[f"pr_{f}"] = ros.groupby("position")[f"ev_{f}"].rank(ascending=False, method="first").astype(int)
         repl = {pos: ros[(ros.position == pos) & (ros[f"pr_{f}"] == n)][f"ev_{f}"].max() for pos, n in REPLACEMENT.items()}
         ros[f"vor_{f}"] = ros[f"ev_{f}"] - ros.position.map(repl).fillna(0)
-        ros[f"r_{f}"] = ros[f"vor_{f}"].rank(ascending=False, method="first").astype(int)
-    ros = ros.sort_values("r_ppr")
+        fx = ros[ros.position.isin(FLEX)][f"ev_{f}"].rank(ascending=False, method="first")
+        ros[f"fx_{f}"] = fx.reindex(ros.index)
+    ros = ros.sort_values("vor_ppr", ascending=False)
 
     ros_out = [dict(
         n=r.name, p=r.position, t=r.team, b=bye.get(r.team), i=r.inj or "",
         iw=int(r.inj_week) if pd.notna(r.inj_week) else None, a=_age(r.birth, today),
         f={f: dict(pts=_r1(getattr(r, f"ev_{f}")), pg=_r1(getattr(r, f"ev_{f}") / r.gp) if r.gp > 0 else None,
-                   gp=_r1(r.gp), v=_r1(getattr(r, f"vor_{f}")), r=int(getattr(r, f"r_{f}")),
-                   pr=int(getattr(r, f"pr_{f}"))) for f in scoring.FORMATS})
+                   gp=_r1(r.gp), v=_r1(getattr(r, f"vor_{f}")), pr=int(getattr(r, f"pr_{f}")),
+                   fx=int(getattr(r, f"fx_{f}")) if pd.notna(getattr(r, f"fx_{f}")) else None) for f in scoring.FORMATS})
         for r in ros.itertuples()]
 
     # ---- this week: points if he plays, with a typical range ----

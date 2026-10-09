@@ -5,7 +5,7 @@
 ## Features
 
 - **Two views**:
-  - **Rest of Season**: projected points for the remaining weeks, discounted for injury risk. The overall rank uses value over replacement for a 12-team, one-QB league.
+  - **Rest of Season**: projected points for the remaining weeks, discounted for injury risk. Positional and FLEX ranks sort by projected points; a value column shows points over replacement for a 12-team, one-QB league.
   - **Weekly**: positional and FLEX start/sit ranks, with a likely range for each player and his projected stat line.
 - **Scoring formats**: PPR, Half PPR and Standard
 - **Filters**: by position (QB, RB, WR, TE, FLEX, K, DST), by player or team search, and a toggle to hide players who are Out or on IR
@@ -73,7 +73,7 @@ When you run `model.build`, each player you ranked gets the points the model pro
 final points = 80% your points + 20% model points
 ```
 
-The blend runs separately for PPR, Half PPR and Standard, before value over replacement and the overall, positional and FLEX ranks are computed. Change the weight with `--weight` (`--weight 0` ignores your files). The build prints any lines it couldn't match, with a suggestion when it looks like a typo.
+The blend runs separately for PPR, Half PPR and Standard, before value over replacement and the positional and FLEX ranks are computed. Change the weight with `--weight` (`--weight 0` ignores your files). The build prints any lines it couldn't match, with a suggestion when it looks like a typo.
 
 Only the blended rankings reach the site, so only someone who can push to this repo can change them.
 
