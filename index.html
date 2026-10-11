@@ -3,190 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Big Board</title>
+<title>Reed's Rankings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
+<style>
+/* A big title and one large button per page of the site */
+.hero{padding-block:28px 22px;border-bottom:3px solid var(--fg)}
+.hero h1{font-size:clamp(52px,11vw,104px)}
+.hero p{margin:12px 0 0;color:var(--muted);font-size:16px;max-width:60ch}
+.hero .meta{text-align:left;margin-top:12px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:24px}
+.tile{display:flex;flex-direction:column;gap:8px;min-width:0;padding:20px;background:var(--surface);color:var(--fg);text-decoration:none;
+  border:1px solid var(--line);border-top:6px solid var(--accent);border-radius:8px;transition:transform .15s,border-color .15s,box-shadow .15s}
+.tile:hover{transform:translateY(-2px);border-color:var(--fg);border-top-color:var(--accent);box-shadow:0 8px 24px rgb(0 0 0 / .12)}
+.tile:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.tile h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:34px;line-height:.95;letter-spacing:.02em;margin:0}
+.tile p{margin:0;color:var(--muted);flex:1}
+.tile .go{font:600 13px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}
+.tile .go::after{content:" →"}
+.kickoff{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px}
+.kickoff h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:28px;letter-spacing:.03em;margin:0}
+.clocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px 28px;margin-top:14px}
+.clocks>div{min-width:0;display:flex;flex-direction:column}
+.kickoff h3{font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0}
+.kickoff .when{margin:4px 0 12px;color:var(--muted)}
+.kickoff .when b{color:var(--fg);font-weight:600}
+/* Pushed to the bottom of each panel, so the two clocks line up when one description wraps */
+.clock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:auto}
+.clock div{background:var(--chalk);border-radius:6px;padding:12px 6px 10px;text-align:center}
+.clock b{display:block;font:500 clamp(28px,6vw,40px)/1 var(--mono);font-variant-numeric:tabular-nums}
+.clock span{display:block;margin-top:6px;font:600 11px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.kickoff .live{margin:14px 0 0;font-size:13px;color:var(--muted)}
+.kickoff .live b{color:var(--accent);font-weight:600}
+</style>
 </head>
 <body>
 
-
 <div class="wrap">
-  <nav class="site" aria-label="Pages"><a href="index.html" aria-current="page">Big Board</a><a href="trade.html">Trade Analyzer</a><a href="candidates.html">Trade Candidates</a></nav>
-  <header class="top">
-    <h1><small id="kicker"></small>Big Board</h1>
+  <nav class="site" aria-label="Pages"><a href="index.html" aria-current="page">Home</a><a href="board.html">Big Board</a><a href="trade.html">Trade Analyzer</a><a href="candidates.html">Trade Candidates</a></nav>
+  <header class="hero">
+    <h1><small id="kicker">Fantasy football</small>Reed's Rankings</h1>
+    <p>Rest-of-season and weekly rankings, a trade analyzer, and this week's players to buy low and sell high.</p>
     <div class="meta" id="meta"></div>
   </header>
 
-  <div class="views" role="tablist" aria-label="Ranking view">
-    <button type="button" role="tab" id="v-ros" data-v="ros" aria-selected="true">Rest of Season</button>
-    <button type="button" role="tab" id="v-wk" data-v="wk" aria-selected="false">Weekly<span class="tag" id="wkTag"></span></button>
+  <div class="tiles">
+    <a class="tile" href="board.html">
+      <h2>Big Board</h2>
+      <p>Rest-of-season and weekly rankings for every position, in PPR, Half PPR and Standard.</p>
+      <span class="go">Open the rankings</span>
+    </a>
+    <a class="tile" href="trade.html">
+      <h2>Trade Analyzer</h2>
+      <p>Put players on each side of a trade and see who wins on rest-of-season value.</p>
+      <span class="go">Analyze a trade</span>
+    </a>
+    <a class="tile" href="candidates.html">
+      <h2>Trade Candidates</h2>
+      <p>This week's players to trade for and trade away, based on how they've played against their rest-of-season ranking.</p>
+      <span class="go">See the candidates</span>
+    </a>
   </div>
 
-  <div class="controls" role="toolbar" aria-label="Ranking filters">
-    <div class="seg" id="fmt" aria-label="Scoring format">
-      <button type="button" data-f="ppr" aria-pressed="true">PPR</button>
-      <button type="button" data-f="half" aria-pressed="false">Half PPR</button>
-      <button type="button" data-f="std" aria-pressed="false">Standard</button>
+  <section class="kickoff" aria-labelledby="k-title">
+    <h2 id="k-title">Countdown to kickoff</h2>
+    <div class="clocks">
+      <div>
+        <h3 id="k-title">Next week kicks off</h3>
+        <p class="when" id="k-when"></p>
+        <div class="clock" role="timer" aria-labelledby="k-title">
+          <div><b id="k-d">–</b><span>Days</span></div>
+          <div><b id="k-h">–</b><span>Hours</span></div>
+          <div><b id="k-m">–</b><span>Minutes</span></div>
+          <div><b id="k-s">–</b><span>Seconds</span></div>
+        </div>
+      </div>
+      <div>
+        <h3 id="sun-title">First Sunday game</h3>
+        <p class="when" id="sun-when"></p>
+        <div class="clock" role="timer" aria-labelledby="sun-title">
+          <div><b id="sun-d">–</b><span>Days</span></div>
+          <div><b id="sun-h">–</b><span>Hours</span></div>
+          <div><b id="sun-m">–</b><span>Minutes</span></div>
+          <div><b id="sun-s">–</b><span>Seconds</span></div>
+        </div>
+      </div>
     </div>
-    <div class="chips" id="pos" aria-label="Position">
-      <button type="button" data-p="QB" aria-pressed="false">QB</button>
-      <button type="button" data-p="RB" aria-pressed="false">RB</button>
-      <button type="button" data-p="WR" aria-pressed="false">WR</button>
-      <button type="button" data-p="TE" aria-pressed="false">TE</button>
-      <button type="button" data-p="FLEX" aria-pressed="true">FLEX</button>
-      <button type="button" data-p="K" aria-pressed="false">K</button>
-      <button type="button" data-p="DST" aria-pressed="false">DST</button>
-    </div>
-    <div class="search">
-      <label for="hideInj"><input type="checkbox" id="hideInj"> Hide Out / IR</label>
-      <input type="search" id="q" placeholder="Search player or team" aria-label="Search player or team">
-    </div>
-  </div>
-
-  <p class="notice" id="notice" hidden></p>
-  <p class="legend" id="legend"></p>
-
-  <div class="tablebox">
-    <table>
-      <thead><tr id="head"></tr></thead>
-      <tbody id="body"></tbody>
-    </table>
-  </div>
-  <div class="count" id="count"></div>
-
-  <div class="notes" id="notes-ros">
-    <section>
-      <h2>How the projections work</h2>
-      <p>Each player's projection is opportunity times efficiency. Opportunity is his share of his team's targets, carries or pass attempts. Efficiency is what he does with them: catch rate, yards per target or carry, and touchdown rate.</p>
-      <p>Recent games count most, and last season counts less than this one. Every rate is pulled toward the average for his position, so a few big games can't swing it too far. Touchdown rates are pulled hardest, because touchdowns are the most random part of scoring.</p>
-    </section>
-    <section>
-      <h2>Rest of season</h2>
-      <p>The total adds up each remaining game's projection. Future games are discounted for the chance of injury: running backs play about 90% of them, receivers and tight ends 93%, quarterbacks 95%. Players on injured reserve are left out for at least four weeks.</p>
-      <p>The FLEX rank sorts running backs, receivers and tight ends by projected points. The value column shows projected points above a replacement-level starter at the same position (QB12, RB30, WR36, TE14, K12 and DST12 in a 12-team, one-QB league).</p>
-    </section>
-    <section>
-      <h2>Team context</h2>
-      <p>Betting lines set each team's expected points and game script: favorites run more, underdogs throw more, and high-scoring games create more touchdowns. <span id="lineNote"></span></p>
-      <p>Matchups adjust yards and touchdowns by up to 10%, based on the points each defense has allowed to the position.</p>
-    </section>
-  </div>
-
-  <div class="notes" id="notes-wk" hidden>
-    <section>
-      <h2>How the weekly rank is built</h2>
-      <p>Weekly rankings are positional, the way start/sit decisions are made. Pick a position to see QB1, RB1 and so on, or FLEX to compare running backs, receivers and tight ends on one list.</p>
-      <p>Projections assume the player suits up. Check the injury tag before you set your lineup. When a teammate is out, his share of targets and carries is spread across the players who are left.</p>
-    </section>
-    <section>
-      <h2>Range</h2>
-      <p>The bar shows the middle 60% of likely outcomes (20th to 80th percentile), and the tick marks the projection. It's based on how much the player's scoring has swung from game to game, blended with what's typical for his position.</p>
-    </section>
-    <section>
-      <h2>Scoring</h2>
-      <p>Offense: 0.04 per passing yard, 4 per passing TD, −2 per interception, 0.1 per rushing or receiving yard, 6 per rushing or receiving TD, −2 per fumble lost, and 1, 0.5 or 0 per catch.</p>
-      <p>Kickers: 3 for a field goal under 40 yards, 4 from 40 to 49, 5 from 50 and up, 1 per extra point, −1 per miss. Defenses: 1 per sack, 2 per interception or fumble recovery, 6 per TD, 2 per safety, and 10 down to −4 for points allowed.</p>
-    </section>
-  </div>
+    <p class="live" id="k-live" hidden></p>
+  </section>
 
   <p class="credit">Projections are this site's own model. Stats, schedules, betting lines, rosters and injury reports come from <a href="https://github.com/nflverse" target="_blank" rel="noopener">nflverse</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>). Expected touchdowns, which the projections blend into their touchdown rates, come from the <a href="https://github.com/ffverse/ffopportunity" target="_blank" rel="noopener">ffopportunity</a> model by Tan Ho and Sebastian Carl (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>), used as published.</p>
 </div>
 
-<script src="data.js?v=95d718e8d2"></script>
+<script src="data.js?v=09ab7bc0fd"></script>
 <script>
-const st = {v:'ros', f:'ppr', p:'FLEX', q:'', hide:false, sk:'r', dir:1};
-try{const s=JSON.parse(localStorage.getItem('cbb')||'{}'); if(['ppr','half','std'].includes(s.f)) st.f=s.f; if(s.p&&s.p!=='ALL') st.p=s.p; if(s.v==='wk') st.v='wk';}catch(e){}
-location.hash.replace('#','')==='weekly' && (st.v='wk');
+try{
+  document.getElementById('kicker').textContent=`Fantasy football · ${INFO.season}`;
+  const built=new Date(INFO.built+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  document.getElementById('meta').innerHTML=`<span>Week ${INFO.week} · updated <b>${built}</b></span>`;
+}catch(e){}
+
+// Two countdowns: the first kickoff of the next week that hasn't started, and the next Sunday's first game.
+// While a week is underway, a line below also names its next kickoff.
 const $=id=>document.getElementById(id);
-const FLEXP=['RB','WR','TE'];
-const OUTS=new Set(['Out','IR','PUP','DNR','Doubtful','Sus']);
-const FMT={ppr:'PPR',half:'Half PPR',std:'Standard'};
-const WEEK=INFO.week;
-const built=new Date(INFO.built+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
-const META={
-  ros:`<span>Projections for Weeks ${WEEK} to 18</span><span>Stats through Week ${INFO.stats_through} · updated <b>${built}</b></span><span><b>${ROS.length}</b> players</span>`,
-  wk:`<span>Week ${WEEK} projections</span><span>Stats through Week ${INFO.stats_through} · updated <b>${built}</b></span><span><b>${WK.length}</b> players</span>`
-};
-const LEGEND={
-  ros:'Proj pts is the rest-of-season total, discounted for injury risk. Value is points above a replacement-level starter at the position.',
-  wk:'Proj is the expected score if he plays. Range shows the middle 60% of likely outcomes.'
-};
-function injTag(o){if(!o.i)return ''; const c=OUTS.has(o.i)?'out':'q'; const l=o.i==='Questionable'?'Q':o.i;
-  return o.iw ? `<span class="inj ${c}" title="From the Week ${o.iw} injury report. This week's report isn't out yet.">${l} · W${o.iw}</span>` : `<span class="inj ${c}">${l}</span>`;}
-function cols(){
-  if(st.v==='ros') return [['r','Rank','l'],['n','Player','l'],['pr','Pos',''],['pts','Proj pts',''],['pg','Per game',''],['gp','Games',''],['v','Value','']];
-  return [['r','Rank','l'],['n','Player','l'],['pr','Pos',''],['pts','Proj',''],['hi','Range','range'],[null,'Projected stats','l']];
+const games=(typeof GAMES!=='undefined'?GAMES:[]).slice().sort((a,b)=>a.ko-b.ko);
+const day=t=>new Date(t*1000).toLocaleDateString(undefined,{weekday:'long',month:'short',day:'numeric'});
+const time=t=>new Date(t*1000).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit',timeZoneName:'short'});
+const etDay=t=>new Date(t*1000).toLocaleDateString('en-US',{weekday:'long',timeZone:'America/New_York'});
+const pad=n=>String(n).padStart(2,'0');
+function setClock(k, ko, when, now){
+  if(ko===undefined){
+    $(`${k}-when`).textContent='The next kickoff will appear after the rankings are next updated.';
+    ['d','h','m','s'].forEach(u=>$(`${k}-${u}`).textContent='–'); return;}
+  $(`${k}-when`).innerHTML=when;
+  let left=Math.max(0,Math.floor(ko-now));
+  $(`${k}-d`).textContent=Math.floor(left/86400); left%=86400;
+  $(`${k}-h`).textContent=pad(Math.floor(left/3600)); left%=3600;
+  $(`${k}-m`).textContent=pad(Math.floor(left/60)); $(`${k}-s`).textContent=pad(left%60);
 }
-function drawHead(){
-  $('head').innerHTML=cols().map(([k,l,c])=>k?`<th class="${c}" data-k="${k}" tabindex="0"${k===st.sk?` aria-sort="${st.dir===1?'ascending':'descending'}"`:''}>${l}</th>`:`<th class="${c}">${l}</th>`).join('');
-  document.querySelectorAll('#head th[data-k]').forEach(th=>{th.addEventListener('click',()=>sortBy(th.dataset.k)); th.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sortBy(th.dataset.k);}});});
+// One game per slot: when several kick off at once, the first one listed in the schedule
+const at=(w,ko)=>{const g=games.find(g=>g.w===w&&g.ko===ko); return `${g.a} @ ${g.h}`;};
+function tick(){
+  const now=Date.now()/1000, openers={};
+  for(const g of games) if(!(g.w in openers)) openers[g.w]=g.ko;
+  const next=Object.keys(openers).map(Number).sort((a,b)=>a-b).find(w=>openers[w]>now);
+  const wko=openers[next];
+  setClock('k', wko, wko&&`<b>Week ${next}</b> kicks off ${day(wko)} at ${time(wko)}: ${at(next,wko)}.`, now);
+  // Sunday by the league's Eastern schedule, so a London morning game still counts as Sunday's first
+  const sun=games.find(g=>g.ko>now&&etDay(g.ko)==='Sunday');
+  setClock('sun', sun?.ko, sun&&`<b>Week ${sun.w}</b>, ${day(sun.ko)} at ${time(sun.ko)}: ${at(sun.w,sun.ko)}.`, now);
+  // A week that has kicked off but still has games to come, unless its next game is the Sunday clock's
+  const cur=games.find(g=>g.ko>now&&openers[g.w]<=now), live=$('k-live');
+  if(cur&&cur.ko!==sun?.ko){
+    live.innerHTML=`<b>Week ${cur.w} is underway.</b> Next kickoff: ${day(cur.ko)}, ${time(cur.ko)} (${at(cur.w,cur.ko)}).`; live.hidden=false;}
+  else if(cur){live.innerHTML=`<b>Week ${cur.w} is underway.</b>`; live.hidden=false;}
+  else live.hidden=true;
 }
-// Normalize each row to the same shape for both views
-function view(o){
-  const d=o.f[st.f];
-  return {...d, rank: st.p==='FLEX'?d.fx:d.pr};
-}
-// Rank-like columns sort ascending; point columns sort biggest first
-function val(o,k){const v=view(o); if(k==='n')return o.n; if(k==='r')return v.rank??1e9; if(k==='pr')return v.pr??1e9;
-  const x=v[k]; return x==null?1e9:-x;}
-function bar(v,max){
-  const x=n=>Math.max(0,Math.min(100,n/max*100));
-  return `<div class="rbox"><span class="rtxt">${v.lo.toFixed(1)}–${v.hi.toFixed(1)}</span><div class="bar"><span class="rail"></span><span class="rng" style="left:${x(v.lo)}%;width:${x(v.hi)-x(v.lo)}%"></span><span class="tick" style="left:${x(v.pts)}%"></span></div></div>`;
-}
-function gameTag(o){
-  if(!o.ko) return '';
-  const t=new Date(o.ko*1000), now=Date.now();
-  if(now>=o.ko*1000) return `<span class="gstat">Kicked off</span>`;
-  const s=t.toLocaleString(undefined,{weekday:'short',hour:'numeric',minute:'2-digit'});
-  return `<span class="gstat up">${s}</span>`;
-}
-const fmt1=x=>x==null?'<span class="na">–</span>':x.toFixed(1);
-function render(){
-  const data=st.v==='ros'?ROS:WK;
-  let rows=data.filter(o=>{
-    if(st.p==='FLEX'){if(!FLEXP.includes(o.p))return false;} else if(o.p!==st.p)return false;
-    if(st.hide&&OUTS.has(o.i))return false;
-    if(st.q){const q=st.q.toLowerCase(); if(!o.n.toLowerCase().includes(q)&&!o.t.toLowerCase().includes(q))return false;}
-    return true;});
-  rows.sort((a,b)=>{const x=val(a,st.sk),y=val(b,st.sk); return (x<y?-1:x>y?1:0)*st.dir || val(a,'r')-val(b,'r');});
-  const wk=st.v==='wk';
-  const maxHi=Math.max(1,...rows.map(o=>view(o).hi||0));
-  $('body').innerHTML = rows.length? rows.map(o=>{const v=view(o);
-    const sub = wk
-      ? `<span class="pos ${o.p}">${o.p}</span><span>${o.t}</span><span class="game">${o.o}</span>${gameTag(o)}${injTag(o)}`
-      : `<span class="pos ${o.p}">${o.p}</span><span>${o.t}</span>${o.b?`<span>Bye ${o.b}</span>`:''}${o.a?`<span>Age ${o.a}</span>`:''}${injTag(o)}`;
-    const cells = wk
-      ? `<td class="proj">${fmt1(v.pts)}</td><td class="range">${bar(v,maxHi)}</td><td class="stat l">${o.s}</td>`
-      : `<td class="proj">${fmt1(v.pts)}</td><td>${fmt1(v.pg)}</td><td>${fmt1(v.gp)}</td><td>${fmt1(v.v)}</td>`;
-    return `<tr>
-      <td class="rank l">${v.rank??'–'}</td>
-      <td class="player l"><div class="pname">${o.n}</div><div class="psub">${sub}</div></td>
-      <td>${o.p}${v.pr??''}</td>${cells}</tr>`;}).join('') : `<tr><td colspan="${cols().length}" class="empty">No players match. Clear the search or switch positions.</td></tr>`;
-  $('count').textContent=`Showing ${rows.length} of ${data.length} players · ${FMT[st.f]} scoring · ${wk?`Week ${WEEK}`:'Rest of season'}`;
-  $('kicker').textContent = `${wk?`Week ${WEEK}`:'Rest of season'} · ${INFO.season}`;
-  $('meta').innerHTML=META[st.v];
-  $('legend').textContent=LEGEND[st.v];
-  const n=$('notice'), stale=WK.find(o=>o.iw);
-  if(wk&&stale){n.hidden=false; n.innerHTML=`<b>Week ${WEEK} injury reports aren't out yet.</b> Teams file them Wednesday to Friday. Players tagged “Out · W${stale.iw}” missed last week's game and may sit again.`;} else n.hidden=true;
-  $('notes-ros').hidden=wk; $('notes-wk').hidden=!wk;
-  document.querySelectorAll('.views button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===st.v));
-  document.querySelectorAll('#fmt button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===st.f));
-  document.querySelectorAll('#pos button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===st.p));
-  drawHead();
-  try{localStorage.setItem('cbb',JSON.stringify({f:st.f,p:st.p,v:st.v}));}catch(e){}
-}
-function sortBy(k){ if(st.sk===k) st.dir*=-1; else {st.sk=k; st.dir=1;} render(); }
-$('wkTag').textContent=`Week ${WEEK}`;
-const lw=INFO.line_weeks;
-$('lineNote').textContent = lw.length ? `Lines are posted through Week ${lw[lw.length-1]}. Later games use each team's season scoring and points allowed instead.` : 'No lines are posted yet, so games use each team\'s season scoring and points allowed instead.';
-document.querySelector('.views').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; st.v=b.dataset.v; st.sk='r'; st.dir=1; render();});
-$('fmt').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){st.f=b.dataset.f; render();}});
-$('pos').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){st.p=b.dataset.p; st.sk='r'; st.dir=1; render();}});
-$('q').addEventListener('input',e=>{st.q=e.target.value.trim(); render();});
-$('hideInj').addEventListener('change',e=>{st.hide=e.target.checked; render();});
-render();
+tick(); setInterval(tick,1000);
 </script>
 
 </body>

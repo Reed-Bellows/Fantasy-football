@@ -1,6 +1,6 @@
 # Fantasy Website
 
-**Big Board** is a fantasy football rankings site for the 2026 season. The rankings come from this project's own projection model, built on open data from [nflverse](https://github.com/nflverse) (CC BY 4.0).
+**Reed's Rankings** is a fantasy football rankings site for the 2026 season. Its home page (`index.html`) links to the Big Board (`board.html`), the Trade Analyzer and Trade Candidates, and counts down to the next week's first kickoff. The rankings come from this project's own projection model, built on open data from [nflverse](https://github.com/nflverse) (CC BY 4.0).
 
 ## Features
 
@@ -104,7 +104,7 @@ This replays a past season, projecting each week from only the data available be
 
 ## Viewing locally
 
-The site is `index.html` (the Big Board), `trade.html` (the Trade Analyzer), `style.css` and `data.js`. You can open `index.html` directly, or serve the folder:
+The site is `index.html` (the Reed's Rankings home page), `board.html` (the Big Board), `trade.html` (the Trade Analyzer), `candidates.html` (Trade Candidates), `style.css` and `data.js`. You can open `index.html` directly, or serve the folder:
 
 ```sh
 python3 -m http.server 8000

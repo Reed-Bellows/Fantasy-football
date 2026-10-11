@@ -86,8 +86,8 @@ td.range{width:190px}
 .gstat.up{background:transparent;border:1px solid var(--accent);color:var(--accent)}
 .notice{font-size:13px;color:var(--muted);padding-block:10px 0;max-width:80ch;margin:0}
 .notice b{color:var(--fg)}
-nav.site{display:flex;gap:18px;padding-bottom:12px;font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.1em}
-nav.site a{color:var(--muted);text-decoration:none;padding-bottom:3px;border-bottom:2px solid transparent}
+nav.site{display:flex;flex-wrap:wrap;gap:6px 18px;padding-bottom:12px;font:600 12px var(--mono);text-transform:uppercase;letter-spacing:.1em}
+nav.site a{white-space:nowrap;color:var(--muted);text-decoration:none;padding-bottom:3px;border-bottom:2px solid transparent}
 nav.site a:hover{color:var(--fg)}
 nav.site a[aria-current="page"]{color:var(--fg);border-bottom-color:var(--accent)}
 [hidden]{display:none!important}

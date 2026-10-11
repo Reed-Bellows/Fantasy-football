@@ -72,7 +72,9 @@ def project(m: Model) -> dict:
     line_weeks = sorted(int(w) for w in m.games[m.games.line].week.unique())
     info = dict(season=m.season, week=m.week, built=datetime.now().date().isoformat(),
                 stats_through=m.week - 1, line_weeks=line_weeks)
-    return dict(ros=ros, wk=wk, bye=bye, info=info, ytd=to_date(m))
+    # Every remaining game's kickoff, for the home page's countdown
+    games = m.games[m.games.home].sort_values("ko")[["week", "ko", "opp", "team"]]
+    return dict(ros=ros, wk=wk, bye=bye, info=info, ytd=to_date(m), games=games)
 
 
 def to_date(m: Model) -> pd.DataFrame:
@@ -166,10 +168,15 @@ def rank(proj: dict, weight: float = blend.WEIGHT) -> dict:
         f={f: wk_fmt(r, f) for f in scoring.FORMATS})
         for r in wk.itertuples()]
 
-    return dict(ROS=ros_out, WK=wk_out, INFO=info)
+    games = proj.get("games")
+    if games is None:
+        print("Kickoff times aren't in the saved projections: run a full build to fill the countdown")
+    games_out = [] if games is None else [dict(w=int(g.week), ko=int(g.ko), a=g.opp, h=g.team) for g in games.itertuples()]
+
+    return dict(ROS=ros_out, WK=wk_out, INFO=info, GAMES=games_out)
 
 
-PAGES = ["index.html", "trade.html", "candidates.html"]  # pages that load data.js
+PAGES = ["index.html", "board.html", "trade.html", "candidates.html"]  # pages that load data.js
 DATA_SRC = re.compile(r'src="data\.js(\?v=[0-9a-f]*)?"')
 
 
