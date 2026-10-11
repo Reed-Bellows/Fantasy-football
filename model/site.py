@@ -72,7 +72,25 @@ def project(m: Model) -> dict:
     line_weeks = sorted(int(w) for w in m.games[m.games.line].week.unique())
     info = dict(season=m.season, week=m.week, built=datetime.now().date().isoformat(),
                 stats_through=m.week - 1, line_weeks=line_weeks)
-    return dict(ros=ros, wk=wk, bye=bye, info=info)
+    return dict(ros=ros, wk=wk, bye=bye, info=info, ytd=to_date(m))
+
+
+def to_date(m: Model) -> pd.DataFrame:
+    """Each player's season so far: games played, points per game, and touchdowns against expected touchdowns."""
+    s = m.d.stats
+    s = s[(s.season == m.season) & (s.week < m.week)].fillna(0)
+    td = s.passing_tds + s.rushing_tds + s.receiving_tds
+    xtd = s.pass_touchdown_exp + s.rush_touchdown_exp + s.rec_touchdown_exp
+    games = s.assign(td=td, xtd=xtd, **{f"pts_{f}": [scoring.offense(dict(
+        pass_yd=r.passing_yards, pass_td=r.passing_tds, int=r.passing_interceptions,
+        rush_yd=r.rushing_yards, rush_td=r.rushing_tds, rec_yd=r.receiving_yards, rec_td=r.receiving_tds,
+        rec=r.receptions, fum=r.rushing_fumbles_lost + r.receiving_fumbles_lost + r.sack_fumbles_lost), ppr)
+        for r in s.itertuples()] for f, ppr in scoring.FORMATS.items()})
+    ytd = games.groupby("player_id").agg(g=("week", "count"), td=("td", "sum"), xtd=("xtd", "sum"),
+                                         **{f"pts_{f}": (f"pts_{f}", "sum") for f in scoring.FORMATS})
+    for f in scoring.FORMATS:
+        ytd[f"ypg_{f}"] = ytd[f"pts_{f}"] / ytd.g
+    return ytd
 
 
 def save(proj: dict, path: Path = CACHE):
@@ -102,12 +120,23 @@ def rank(proj: dict, weight: float = blend.WEIGHT) -> dict:
         ros[f"fx_{f}"] = fx.reindex(ros.index)
     ros = ros.sort_values("vor_ppr", ascending=False)
 
+    # Season so far, for the Trade Candidates page (saved projections from before it existed don't have it)
+    ytd = proj.get("ytd")
+    if ytd is None:
+        print("Season-to-date stats aren't in the saved projections: run a full build to fill Trade Candidates")
+        ytd = pd.DataFrame(columns=["g", "td", "xtd", *(f"ypg_{f}" for f in scoring.FORMATS)])
+    ros = ros.merge(ytd, left_on="player_id", right_index=True, how="left")
+
     ros_out = [dict(
         n=r.name, p=r.position, t=r.team, b=bye.get(r.team), i=r.inj or "",
         iw=int(r.inj_week) if pd.notna(r.inj_week) else None, a=_age(r.birth, today),
+        g=int(r.g) if pd.notna(r.g) else 0, td=int(r.td) if pd.notna(r.td) else 0,
+        xtd=_r1(r.xtd) if pd.notna(r.xtd) else 0,
         f={f: dict(pts=_r1(getattr(r, f"ev_{f}")), pg=_r1(getattr(r, f"ev_{f}") / r.gp) if r.gp > 0 else None,
                    gp=_r1(r.gp), v=_r1(getattr(r, f"vor_{f}")), pr=int(getattr(r, f"pr_{f}")),
-                   fx=int(getattr(r, f"fx_{f}")) if pd.notna(getattr(r, f"fx_{f}")) else None) for f in scoring.FORMATS})
+                   fx=int(getattr(r, f"fx_{f}")) if pd.notna(getattr(r, f"fx_{f}")) else None,
+                   ypg=_r1(getattr(r, f"ypg_{f}")) if pd.notna(getattr(r, f"ypg_{f}")) else None)
+           for f in scoring.FORMATS})
         for r in ros.itertuples()]
 
     # ---- this week: points if he plays, with a typical range ----
@@ -140,7 +169,7 @@ def rank(proj: dict, weight: float = blend.WEIGHT) -> dict:
     return dict(ROS=ros_out, WK=wk_out, INFO=info)
 
 
-PAGES = ["index.html", "trade.html"]  # pages that load data.js
+PAGES = ["index.html", "trade.html", "candidates.html"]  # pages that load data.js
 DATA_SRC = re.compile(r'src="data\.js(\?v=[0-9a-f]*)?"')
 
 

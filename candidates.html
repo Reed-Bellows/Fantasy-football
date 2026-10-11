@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Trade Candidates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+/* Two lists, trade for over trade away, each a short table with a reason per player */
+.list{margin-top:20px}
+.list h2{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:26px;letter-spacing:.03em;margin:0 0 2px;display:flex;align-items:center;gap:10px}
+.list h2::before{content:"";width:6px;height:22px;border-radius:2px;background:var(--accent)}
+.list.sell h2::before{background:var(--bad)}
+.list .sub{color:var(--muted);font-size:13px;margin:0 0 10px}
+.list table{min-width:720px}
+td.gap{font-weight:600;font-size:14px}
+.buy td.gap{color:var(--accent)} .sell td.gap{color:var(--bad)}
+td.why{font-family:var(--body);font-size:13px;color:var(--muted);white-space:normal;text-align:left;min-width:220px}
+.more{margin-top:8px;font:600 13px var(--body);background:transparent;color:var(--fg);border:1.5px solid var(--fg);border-radius:6px;padding:7px 12px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="site" aria-label="Pages"><a href="index.html">Big Board</a><a href="trade.html">Trade Analyzer</a><a href="candidates.html" aria-current="page">Trade Candidates</a></nav>
+  <header class="top">
+    <h1><small id="kicker"></small>Trade Candidates</h1>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="Filters">
+    <div class="seg" id="fmt" aria-label="Scoring format">
+      <button type="button" data-f="ppr" aria-pressed="true">PPR</button>
+      <button type="button" data-f="half" aria-pressed="false">Half PPR</button>
+      <button type="button" data-f="std" aria-pressed="false">Standard</button>
+    </div>
+    <div class="chips" id="pos" aria-label="Position">
+      <button type="button" data-p="ALL" aria-pressed="true">ALL</button>
+      <button type="button" data-p="QB" aria-pressed="false">QB</button>
+      <button type="button" data-p="RB" aria-pressed="false">RB</button>
+      <button type="button" data-p="WR" aria-pressed="false">WR</button>
+      <button type="button" data-p="TE" aria-pressed="false">TE</button>
+    </div>
+  </div>
+
+  <section class="list buy" aria-labelledby="h-buy">
+    <h2 id="h-buy">Trade for</h2>
+    <p class="sub">Producing less than their rest-of-season ranking, so they should be cheap to get.</p>
+    <div class="tablebox"><table><thead><tr>
+      <th class="l">Player</th><th>So far</th><th>Projected</th><th>Gap</th><th class="l">Why</th>
+    </tr></thead><tbody id="buy"></tbody></table></div>
+  </section>
+
+  <section class="list sell" aria-labelledby="h-sell">
+    <h2 id="h-sell">Trade away</h2>
+    <p class="sub">Producing more than their rest-of-season ranking, so their value is at its peak.</p>
+    <div class="tablebox"><table><thead><tr>
+      <th class="l">Player</th><th>So far</th><th>Projected</th><th>Gap</th><th class="l">Why</th>
+    </tr></thead><tbody id="sell"></tbody></table></div>
+  </section>
+
+  <button type="button" class="more" id="more" aria-expanded="false">Show more</button>
+
+  <div class="notes">
+    <section>
+      <h2>How players are picked</h2>
+      <p><b>So far</b> is fantasy points per game this season and the player's rank at his position among players with at least 2 games. <b>Projected</b> is his projected points per game and his rest-of-season rank on the Big Board.</p>
+      <p>Players are compared by rank, not raw points. Nearly every hot start is projected to cool off, so raw points would put every star on the trade-away list. A WR28 so far who ranks WR9 on the Big Board is producing like a WR28 but should score like a WR9.</p>
+      <p><b>Gap</b> is his rest-of-season points on the Big Board minus those of the player ranked where he has played so far. A gap over more games left counts for more.</p>
+    </section>
+    <section>
+      <h2>Who qualifies</h2>
+      <p>Quarterbacks, running backs, wide receivers and tight ends who have played at least 2 games, rank at least 4 spots higher (trade for) or lower (trade away) on the Big Board than they have played so far, have positive value over replacement on the board, and aren't Out, Doubtful, suspended or on IR. Kickers and defenses are left out. Points per game counts only the games a player played.</p>
+    </section>
+    <section>
+      <h2>Why</h2>
+      <p>Touchdowns are the most common reason results don't match usage. When a player's touchdowns are at least 1.5 off his expected touchdowns from the ffopportunity model, which credits each target and carry by where on the field it came, that's the reason shown. Otherwise the gap comes from his volume or efficiency, which the rest-of-season rankings expect to drift back toward normal.</p>
+      <p>These lists are league-wide, not built from your roster.</p>
+    </section>
+  </div>
+
+  <p class="credit">Projections are this site's own model. Stats, schedules, betting lines, rosters and injury reports come from <a href="https://github.com/nflverse" target="_blank" rel="noopener">nflverse</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>). Expected touchdowns come from the <a href="https://github.com/ffverse/ffopportunity" target="_blank" rel="noopener">ffopportunity</a> model by Tan Ho and Sebastian Carl and are licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. This page shows each player's season total of them as published, and the projections blend them into their touchdown rates.</p>
+</div>
+
+<script src="data.js?v=95d718e8d2"></script>
+<script>
+const $=id=>document.getElementById(id);
+const FMT={ppr:'PPR',half:'Half PPR',std:'Standard'};
+const OUTS=new Set(['Out','IR','PUP','DNR','Doubtful','Sus']);
+const POS=new Set(['QB','RB','WR','TE']);
+const MIN_GAMES=2;     // games played before a player can appear
+const MIN_MOVE=4;      // spots a player's Big Board rank must differ from his rank so far
+const TD_LUCK=1.5;     // touchdowns this far from expected become the reason shown
+const SHORT=5, LONG=10;
+const st={f:'ppr', p:'ALL', more:false};
+try{const s=JSON.parse(localStorage.getItem('cbb')||'{}'); if(FMT[s.f]) st.f=s.f;
+  const c=JSON.parse(localStorage.getItem('cbb-cand')||'{}'); if(c.p==='ALL'||POS.has(c.p)) st.p=c.p; st.more=!!c.more;}catch(e){}
+const fmt1=x=>x.toFixed(1);
+const sign=x=>(x>0?'+':x<0?'−':'')+fmt1(Math.abs(x));
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function injTag(o){if(!o.i)return ''; return `<span class="inj q">${o.i==='Questionable'?'Q':esc(o.i)}</span>`;}
+
+// Within each position, rank everyone with enough games by points per game so far. Each player's gap is his
+// Big Board rest-of-season points minus those of the player at his so-far rank on the Big Board.
+function candidates(){
+  const out=[];
+  for(const pos of POS){
+    if(st.p!=='ALL'&&pos!==st.p) continue;
+    const board=ROS.filter(o=>o.p===pos).sort((a,b)=>a.f[st.f].pr-b.f[st.f].pr);
+    const soFar=ROS.filter(o=>o.p===pos&&(o.g||0)>=MIN_GAMES&&o.f[st.f].ypg!=null)
+      .sort((a,b)=>b.f[st.f].ypg-a.f[st.f].ypg);
+    soFar.forEach((o,i)=>{const d=o.f[st.f];
+      if(OUTS.has(o.i)||d.v<=0||d.pg==null) return;
+      const peer=board[Math.min(i,board.length-1)].f[st.f];
+      out.push({o, d, now:i+1, next:d.pr, total:d.pts-peer.pts});});
+  }
+  return out;
+}
+
+function why(c, buy){
+  const {o}=c, off=o.td-o.xtd, td=`${o.td} TD${o.td===1?'':'s'} on ${fmt1(o.xtd)} expected`;
+  const move=`${o.p}${c.now} so far, projects as the ${o.p}${c.next}.`;
+  if(buy&&off<=-TD_LUCK) return `${move} ${td}: the scoring chances are there, and the touchdowns should follow.`;
+  if(!buy&&off>=TD_LUCK) return `${move} ${td}: he has been lucky in the end zone.`;
+  const rest=buy?'volume or efficiency to pick up':'volume or efficiency to come back down';
+  if(Math.abs(off)>=TD_LUCK) return `${move} Even with ${td}, expect his ${rest}.`;
+  return `${move} Touchdowns are on track (${td}). Expect his ${rest}.`;
+}
+
+function rows(list, buy){
+  if(!list.length) return `<tr><td colspan="5" class="empty">No players qualify yet.</td></tr>`;
+  return list.map(c=>{const {o,d}=c;
+    return `<tr><td class="l player"><div class="pname">${esc(o.n)}</div><div class="psub"><span class="pos ${o.p}">${o.p}</span><span>${o.t}</span><span>${o.g} G</span>${injTag(o)}</div></td>
+      <td>${fmt1(d.ypg)} <span class="na">${o.p}${c.now}</span></td><td class="proj">${fmt1(d.pg)} <span class="na">${o.p}${c.next}</span></td>
+      <td class="gap">${sign(c.total)}</td><td class="why">${why(c,buy)}</td></tr>`;}).join('');
+}
+
+function render(){
+  const all=candidates(), n=st.more?LONG:SHORT;
+  const buy=all.filter(c=>c.total>0&&c.now-c.next>=MIN_MOVE).sort((a,b)=>b.total-a.total).slice(0,n);
+  const sell=all.filter(c=>c.total<0&&c.next-c.now>=MIN_MOVE).sort((a,b)=>a.total-b.total).slice(0,n);
+  $('buy').innerHTML=rows(buy,true); $('sell').innerHTML=rows(sell,false);
+  $('more').textContent=st.more?'Show less':'Show more';
+  $('more').setAttribute('aria-expanded',st.more);
+  document.querySelectorAll('#fmt button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===st.f));
+  document.querySelectorAll('#pos button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===st.p));
+  $('kicker').textContent=`Week ${INFO.week} · ${INFO.season}`;
+  const built=new Date(INFO.built+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  $('meta').innerHTML=`<span>So far through Week ${INFO.stats_through} · projected Weeks ${INFO.week} to 18 · ${FMT[st.f]}</span><span>Updated <b>${built}</b></span>`;
+  try{const s=JSON.parse(localStorage.getItem('cbb')||'{}'); s.f=st.f; localStorage.setItem('cbb',JSON.stringify(s));
+      localStorage.setItem('cbb-cand',JSON.stringify({p:st.p,more:st.more}));}catch(e){}
+}
+$('fmt').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){st.f=b.dataset.f; render();}});
+$('pos').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){st.p=b.dataset.p; render();}});
+$('more').addEventListener('click',()=>{st.more=!st.more; render();});
+render();
+</script>
+
+</body>
+</html>
