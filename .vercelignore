@@ -1,0 +1,7 @@
+# Files that build the site but shouldn't be served on it
+model/
+my_rankings_ros.csv
+my_rankings_week.csv
+requirements.txt
+README.md
+.gitignore
