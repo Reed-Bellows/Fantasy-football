@@ -26,7 +26,7 @@ RB,19,Breece Hall
 RB,20,Ollie Gordon
 RB,21,Josh Jacobs
 RB,22,Quinshon Judkins
-RB,23,Onarion Hampton
+RB,23,Omarion Hampton
 RB,24,Treveyon Henderson
 RB,25,Rhamondre Stevenson
 RB,26,Kyle Monangai
@@ -55,6 +55,7 @@ RB,48,Alvin Kamara
 RB,49,Emanuel Wilson
 RB,50,Zach Charbonnet
 RB,51,Kendre Miller
+RB,52,Tyrone Tracy Jr.
 
 
 # Wide Receivers
@@ -82,40 +83,38 @@ WR,21,Luther Burden
 WR,22,DJ Moore
 WR,23,Jalen Coker
 WR,24,Carnell Tate
-WR,25,
-WR,26,Michael Wilson
-WR,27,Emeka Egbuka
-WR,28,Rashee Rice
-WR,29,Jaylen Waddle
-WR,30,Rome Odunze
-WR,31,Luther Burden
-WR,32,Jameson Williams
+WR,25,Michael Wilson
+WR,26,Emeka Egbuka
+WR,27,Rashee Rice
+WR,28,Jaylen Waddle
+WR,29,Rome Odunze
+WR,30,Jameson Williams
+WR,31,Germie Bernard
+WR,32,Josh Downs
 WR,33,Mike Evans
-WR,34,Josh Downs
-WR,35,Ladd McConkey
-WR,36,DK Metcalf
-WR,37,Denzel Boston
-WR,38,Marvin Harrison Jr.
-WR,39,Stefon Diggs
-WR,40,KC Concepcion Jr.
-WR,41,Deebo Samuel Sr.
-WR,42,Jakobi Meyers
-WR,43,Davante Adams
-WR,44,Jordan Addison
-WR,45,Xavier Worthy
-WR,46,Marvin Harrison Jr.
-WR,47,Chris Godwin Jr.
+WR,34,Ladd McConkey
+WR,35,DK Metcalf
+WR,36,Denzel Boston
+WR,37,Marvin Harrison Jr.
+WR,38,Stefon Diggs
+WR,39,KC Concepcion Jr.
+WR,40,Deebo Samuel Sr.
+WR,41,Jakobi Meyers
+WR,42,Omar Cooper Jr.
+WR,43,Xavier Worthy
+WR,44,Chris Godwin Jr.
+WR,45,Tre Tucker
+WR,46,Jordyn Tyson
+WR,47,Keenan Allen
 WR,48,Devaughn Vele
-WR,49,Jordyn Tyson
-WR,50,Keenan Allen
-WR,51,Chris Bell
-WR,52,Brian Thomas Jr.
-WR,53,Tre Tucker
-WR,54,Kalif Raymond
-WR,55,Wandale Robinson
-WR,56,Malik Washington
-WR,57,Romeo Doubs
-WR,58,Khalil Shakir
+WR,49,Brian Thomas Jr.
+WR,50,Kalif Raymond
+WR,51,Wandale Robinson
+WR,52,Malik Washington
+WR,53,Antonio Williams
+WR,54,Khalil Shakir
+WR,55,Davante Adams
+
 
 #Quarterbacks
 QB,1,Josh Allen
@@ -133,24 +132,24 @@ QB,12,Tyler Shough
 QB,13,Jordan Love
 QB,14,Matthew Stafford
 QB,15,Bryce Young
-QB,16,Jalen Hurts
-QB,17,Bo Nix
-QB,18,C.J. Stroud
-QB,19,Justin Herbert
-QB,20,Malik Willis
-QB,21,Sam Darnold
-QB,22,Kyler Murray
-QB,23,Kirk Cousins
-QB,24,Jacoby Brissett
-QB,25,Geno Smith
-QB,26,Deshaun Watson
-QB,27,Daniel Jones
-QB,28,Baker Mayfield
-QB,29,Michael Penix Jr.
-QB,30,Aaron Rodgers
-QB,31,Cam Ward
-QB,32,Jameis Winston
-QB,33,Jalon Daniels
+QB,16,Bo Nix
+QB,17,C.J. Stroud
+QB,18,Justin Herbert
+QB,19,Malik Willis
+QB,20,Sam Darnold
+QB,21,Kyler Murray
+QB,22,Kirk Cousins
+QB,23,Jacoby Brissett
+QB,24,Geno Smith
+QB,25,Deshaun Watson
+QB,26,Daniel Jones
+QB,27,Baker Mayfield
+QB,28,Michael Penix Jr.
+QB,29,Aaron Rodgers
+QB,30,Cam Ward
+QB,31,J.J. McCarthy
+QB,32,Jalon Daniels
+QB,33,Tanner McKee
 
 # Tight End Rankings
 TE,1,Brock Bowers
